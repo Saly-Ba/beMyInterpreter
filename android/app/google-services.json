@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "1086072201157",
+    "firebase_url": "https://bemyinterpreter-default-rtdb.firebaseio.com",
+    "project_id": "bemyinterpreter",
+    "storage_bucket": "bemyinterpreter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086072201157:android:df38771be3d2b46bbfb5ac",
+        "android_client_info": {
+          "package_name": "com.example.be_my_interpreter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086072201157-jb32v3m1b0ek7bs0npjfu1ejnkh1s2qe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGj0iG34mfLmx9s1ma8fdZIhJ7TfHdDlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086072201157-jb32v3m1b0ek7bs0npjfu1ejnkh1s2qe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1086072201157-c2aggis8jts5qb4lo49i6im9tva2l0d2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.memoire.bemyinterprete"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086072201157:android:281c448de8d304b9bfb5ac",
+        "android_client_info": {
+          "package_name": "com.example.be_my_interpreter_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086072201157-jb32v3m1b0ek7bs0npjfu1ejnkh1s2qe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGj0iG34mfLmx9s1ma8fdZIhJ7TfHdDlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086072201157-jb32v3m1b0ek7bs0npjfu1ejnkh1s2qe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1086072201157-c2aggis8jts5qb4lo49i6im9tva2l0d2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.memoire.bemyinterprete"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
