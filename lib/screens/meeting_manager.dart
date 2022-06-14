@@ -1,4 +1,4 @@
-import 'package:be_my_interpreter_2/meetingsManager.dart';
+import 'package:be_my_interpreter_2/db_manager.dart';
 import 'package:be_my_interpreter_2/models.dart';
 import 'package:be_my_interpreter_2/screens/languages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -155,14 +155,24 @@ class CreerReunionState extends State<CreerReunion> {
                           }).map((DocumentSnapshot document) {
                             Map<String, dynamic> data =
                                 document.data()! as Map<String, dynamic>;
-                            userModel = UserModel.fromMap(data);
-                            for (var element in participants) {
-                              if (element.id != userModel!.id) {
-                                participants.add(userModel!);
-                              }
-                            }
+                            return FutureBuilder(
+                                future: UserModel.create(data),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<UserModel> snapshot) {
+                                  if (snapshot.hasData) {
+                                    userModel = snapshot.data;
+                                    
+                                    if (participants.every(
+                                        (item) => item.id != userModel!.id)) {
+                                      participants.add(userModel!);
+                                    }
 
-                            return InputChip(label: Text(userModel!.email!));
+                                    return InputChip(
+                                        label: Text(userModel!.email!));
+                                  } else {
+                                    return const Text("No data in there");
+                                  }
+                                });
                           }).toList(),
                         ),
                       ),
@@ -179,12 +189,9 @@ class CreerReunionState extends State<CreerReunion> {
                                 title: titleController.text,
                                 start: startDateTime,
                                 end: endDateTime,
-                                //language: language,
+                                language: language,
                                 participants: participants,
                                 validate: false);
-
-                            print(participants);
-                            print(emails);
 
                             meetingsManager.createMeeting(meeting);
 
@@ -203,6 +210,183 @@ class CreerReunionState extends State<CreerReunion> {
             ),
           );
         });
+  }
+}
+
+class UpdateMeeting extends StatefulWidget {
+  final Meeting meeting;
+  const UpdateMeeting({Key? key, required this.meeting}) : super(key: key);
+
+  @override
+  UpdateMeetingState createState() => UpdateMeetingState();
+}
+
+class UpdateMeetingState extends State<UpdateMeeting> {
+  final _formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
+  final emailsController = TextEditingController();
+  DateTime now = DateTime.now();
+  DateTime? startDateTime = DateTime.now();
+  DateTime? endDateTime;
+  List<UserModel> participants = [];
+  Language? language;
+  UserModel? userModel;
+  MeetingsManager meetingsManager = MeetingsManager();
+  var emails = [];
+
+  Widget? _buildTitle() {
+    return TextFormField(
+      decoration: const InputDecoration(labelText: "Titre de la reunion :"),
+      controller: titleController,
+      validator: (String? value) {
+        if (value!.isEmpty) {
+          return "Ce champ est requis !";
+        }
+        return null;
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    titleController.text = widget.meeting.title!;
+    startDateTime = widget.meeting.start!;
+    endDateTime = widget.meeting.end;
+  }
+
+  Widget? _buildParticipantsEmails() {
+    return TextFormField(
+      decoration: const InputDecoration(labelText: "Ajouter un participant :"),
+      controller: emailsController,
+      validator: (String? value) {
+        if (value!.isEmpty) {
+          return "Ce champ est requis !";
+        }
+        return null;
+      },
+      onFieldSubmitted: (value) {
+        setState(() {
+          emails = value.split(";");
+        });
+      },
+    );
+  }
+
+  Widget? _buildSingleLanguage() {
+    // ignore: prefer_function_declarations_over_variables
+    final onTap = () async {
+      final language = await Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const LanguageList()));
+
+      if (language == null) return;
+
+      setState(() => this.language = language);
+    };
+
+    return language == null
+        ? _buildListLanguage(title: 'No language', onTap: onTap)
+        : _buildListLanguage(title: language!.language, onTap: onTap);
+  }
+
+  Widget? _buildListLanguage({
+    @required String? title,
+    @required VoidCallback? onTap,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      title: Text(
+        title!,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(color: Colors.black, fontSize: 18),
+      ),
+      trailing: const Icon(Icons.arrow_drop_down, color: Colors.black),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Créer une reunion")),
+      body: Container(
+        margin: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildTitle()!,
+                const SizedBox(height: 20),
+                _FormDatePicker(
+                    input: "Date du debut",
+                    minDate: now,
+                    maxDate: DateTime(2100),
+                    onChanged: (value) {
+                      setState(() {
+                        startDateTime = value;
+                      });
+                    }),
+                const SizedBox(height: 20),
+                _FormDatePicker(
+                    input: "Date de la fin",
+                    minDate: startDateTime!,
+                    maxDate: startDateTime!.add(const Duration(hours: 5)),
+                    onChanged: (value) {
+                      setState(() {
+                        endDateTime = value;
+                      });
+                    }),
+                const SizedBox(height: 20),
+                _buildParticipantsEmails()!,
+                /*SizedBox(
+                        height: 50.0,
+                        child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          children: widget.meeting.participants!.forEach((element) {
+                            
+                            return InputChip(label: Text(element.email!));
+                          })
+
+                            
+                          
+                        ),
+                      ),*/
+                const SizedBox(height: 20),
+                _buildSingleLanguage()!,
+                ElevatedButton(
+                  onPressed: (() {
+                    if (_formKey.currentState!.validate()) {
+                      Meeting meeting = Meeting(
+                          id: widget.meeting.id,
+                          title: titleController.text,
+                          start: startDateTime,
+                          end: endDateTime,
+                          language: language,
+                          participants: participants,
+                          validate: false);
+
+                      meetingsManager.updateMeeting(meeting);
+
+                      titleController.clear();
+                      emailsController.clear();
+                      startDateTime = now;
+                      endDateTime = now;
+
+                      Navigator.pop(context);
+                    }
+                  }),
+                  child: const Text("Update"),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -269,7 +453,7 @@ class _FormDatePickerState extends State<_FormDatePicker> {
               currentTime: DateTime.now(),
               locale: LocaleType.en,
             );
-            print(newDate);
+            //print(newDate);
             // Don't change the date if the date picker returns null.
             if (newDate == null) {
               return;

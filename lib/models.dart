@@ -9,9 +9,9 @@ class UserModel {
   String? lastName;
   String? email;
   String? password;
-  List<dynamic>? languages;
+  List<Language?>? languages;
   List<Meeting?>? meetings;
-  UserType userType;
+  UserType? userType;
 
   UserModel({
     required this.id,
@@ -30,16 +30,38 @@ class UserModel {
     this.meetings = meetings;
   }
 
-  factory UserModel.fromMap(map) {
-    return UserModel(
-        id: map['id'],
-        firstName: map['firstName'],
-        lastName: map['lastName'],
-        email: map['email'],
-        password: map['password'],
-        languages: map['languages'],
-        userType: UserType.values.byName(map['userType']),
-        meetings: map['meetings']);
+  UserModel._({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.password,
+    this.userType,
+    this.languages,
+    this.meetings,
+  });
+
+  static Future<UserModel> create(map) async {
+    return UserModel._(
+      id: map['id'],
+      firstName: map['firstName'],
+      lastName: map['lastName'],
+      email: map['email'],
+      password: map['password'],
+      languages:
+          await Future.wait((map['languages'] as List<dynamic>).map((e) async {
+        return await (e as DocumentReference).get().then((value) {
+          return Language.fromMap(value.data());
+        });
+      })),
+      userType: UserType.values.byName(map['userType']),
+      meetings:
+          await Future.wait((map['meetings'] as List<dynamic>).map((e) async {
+        return await (e as DocumentReference).get().then((value) async {
+          return await Meeting.create(value.data());
+        });
+      })),
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -90,18 +112,18 @@ class Meeting {
   final String? title;
   final DateTime? start;
   final DateTime? end;
-  List<dynamic>? participants;
+  final List<UserModel>? participants;
   bool? validate = false;
-  //final Language? language;
+  final Language? language;
 
   Meeting({
     required this.id,
     required this.title,
     required this.start,
     required this.end,
-    //required this.language,
+    required this.language,
     this.validate,
-    this.participants,
+    required this.participants,
   });
 
   bool? get getValidate => validate;
@@ -110,21 +132,32 @@ class Meeting {
     validate = validation;
   }
 
-  List<dynamic>? get getParticipants => participants;
+  Meeting._(
+      {this.id,
+      this.title,
+      this.start,
+      this.end,
+      this.validate,
+      this.participants,
+      this.language});
 
-  set setParticipants(List<dynamic>? participants) {
-    this.participants = participants;
-  }
-
-  factory Meeting.fromMap(map) {
-    return Meeting(
+  static Future<Meeting> create(map) async {
+    return Meeting._(
       id: map['id'],
       title: map['title'],
       start: (map['start'] as Timestamp).toDate(),
       end: (map['end'] as Timestamp).toDate(),
-      //language: map['language'],
+      language:
+          await (map['language'] as DocumentReference).get().then((value) {
+        return Language.fromMap(value);
+      }),
       validate: map['validate'],
-      participants: map['participants'],
+      /*participants: await Future.wait(
+          (map['participants'] as List<dynamic>).map((e) async {
+        return await (e as DocumentReference).get().then((value) async {
+          return await UserModel.create(value.data());
+        });
+      })),*/
     );
   }
 
@@ -134,9 +167,14 @@ class Meeting {
       'title': title,
       'start': start,
       'end': end,
-      //'language': language,
+      'language': language,
       'validate': validate,
       'participants': participants,
     };
   }
 }
+
+/*class Room {
+  final String? id;
+  final 
+}*/

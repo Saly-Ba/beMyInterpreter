@@ -1,9 +1,11 @@
+import 'package:be_my_interpreter_2/models.dart';
 import 'package:be_my_interpreter_2/screens/home.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
-  const NavBar({Key? key}) : super(key: key);
+  final UserModel? userModel;
+  const NavBar({Key? key, this.userModel}) : super(key: key);
 
   @override
   NavBarState createState() => NavBarState();
@@ -13,13 +15,14 @@ class NavBarState extends State<NavBar> {
   final navigationKey = GlobalKey<CurvedNavigationBarState>();
   int index = 0;
 
-  final screens = [
-    const Home(),
-    const ListReunion(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+
+    final screens = [
+      Home(userModel: widget.userModel,),
+      const ListReunion(),
+  ];
+
     final items = <Widget>[
       const Icon(Icons.home, size: 30),
       const Icon(Icons.list, size: 30),

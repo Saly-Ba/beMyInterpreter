@@ -1,5 +1,8 @@
+import 'package:be_my_interpreter_2/db_manager.dart';
 import 'package:be_my_interpreter_2/models.dart';
+import 'package:be_my_interpreter_2/screens/home.dart';
 import 'package:be_my_interpreter_2/screens/languages.dart';
+import 'package:be_my_interpreter_2/screens/nav_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -64,11 +67,10 @@ class UserFormState extends State<UserForm> {
         if (value!.isEmpty) {
           return "Ce champ est requis !";
         }
-        return null;
-        /*if (RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[a-z]").hasMatch(value)) {
+        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[a-z]").hasMatch(value)) {
           return "Entrez un email valide s'il vous plait";
         }
-        return null;*/
+        return null;
       },
     );
   }
@@ -226,54 +228,22 @@ class UserFormState extends State<UserForm> {
 
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {
-                postDetailsToFirestore(),
-              })
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
+
+      nameController.clear();
+      lastNameController.clear();
+      emailController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+      languages = [];
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: ((context) => NavBar(
+                    userModel: userModel,
+                  ))));
     }
-  }
-
-  postDetailsToFirestore() async {
-    //Calling the firebase firestore
-
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    User? user = _auth.currentUser;
-
-    userModel = UserModel(
-        id: user!.uid,
-        firstName: nameController.text,
-        lastName: lastNameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-        languages: languages!,
-        userType: userType!);
-
-    dynamic myarray = [];
-    for (var element in userModel!.languages!) {
-      myarray.add(firebaseFirestore.doc("langues/" + (element!.id).toString()));
-    }
-
-    await firebaseFirestore.collection('users').doc(user.uid).set({
-      "id": userModel!.id,
-      "firstName": userModel!.firstName,
-      "lastName": userModel!.lastName,
-      "email": userModel!.email,
-      "password": userModel!.password,
-      "languages": myarray,
-      "userType": userModel!.userType.name,
-    });
-
-    nameController.clear();
-    lastNameController.clear();
-    emailController.clear();
-    passwordController.clear();
-    confirmPasswordController.clear();
-
-    Fluttertoast.showToast(msg: "Votre compte a été créer avec succes !");
   }
 }
+  
 
