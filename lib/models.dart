@@ -112,7 +112,6 @@ class Meeting {
   final String? title;
   final DateTime? start;
   final DateTime? end;
-  final List<UserModel>? participants;
   bool? validate = false;
   final Language? language;
 
@@ -123,7 +122,6 @@ class Meeting {
     required this.end,
     required this.language,
     this.validate,
-    required this.participants,
   });
 
   bool? get getValidate => validate;
@@ -138,7 +136,6 @@ class Meeting {
       this.start,
       this.end,
       this.validate,
-      this.participants,
       this.language});
 
   static Future<Meeting> create(map) async {
@@ -152,12 +149,6 @@ class Meeting {
         return Language.fromMap(value);
       }),
       validate: map['validate'],
-      /*participants: await Future.wait(
-          (map['participants'] as List<dynamic>).map((e) async {
-        return await (e as DocumentReference).get().then((value) async {
-          return await UserModel.create(value.data());
-        });
-      })),*/
     );
   }
 
@@ -169,12 +160,6 @@ class Meeting {
       'end': end,
       'language': language,
       'validate': validate,
-      'participants': participants,
     };
   }
 }
-
-/*class Room {
-  final String? id;
-  final 
-}*/
