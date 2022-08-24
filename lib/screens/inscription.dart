@@ -1,14 +1,18 @@
+import 'package:be_my_interpreter_2/auth_service.dart';
 import 'package:be_my_interpreter_2/db_manager.dart';
 import 'package:be_my_interpreter_2/models.dart';
 import 'package:be_my_interpreter_2/screens/home.dart';
 import 'package:be_my_interpreter_2/screens/languages.dart';
 import 'package:be_my_interpreter_2/screens/nav_bar.dart';
+import 'package:be_my_interpreter_2/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({Key? key}) : super(key: key);
@@ -24,18 +28,53 @@ class UserFormState extends State<UserForm> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  UserType? userType = UserType.sourd;
+  UserType? userType = UserType.autre;
   UserModel? userModel;
   Language? language;
   List<Language?>? languages = [];
 
-  //Firebase
-  final _auth = FirebaseAuth.instance;
+  Widget _prenomIcon(Size size) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
+      child: const Icon(
+        Icons.account_circle_outlined,
+        color: Color(0XFF4FA3A5),
+        size: 27.5,
+      ),
+    );
+  }
 
-  Widget? _buildName() {
+  Widget _passwordIcon(Size size) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
+      child: const Icon(
+        Icons.lock_outline,
+        color: Color(0XFF4FA3A5),
+        size: 27.5,
+      ),
+    );
+  }
+
+  Widget _emailIcon(Size size) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
+      child: const Icon(
+        Icons.email_outlined,
+        color: Color(0XFF4FA3A5),
+        size: 27.5,
+      ),
+    );
+  }
+
+  Widget? _buildName(Size size) {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Prénom :"),
+      decoration: inputStyle(size, 'Votre prénom', 'Prénom', _prenomIcon(size)),
+      cursorColor: const Color(0XFF4FA3A5),
       controller: nameController,
+      textCapitalization: TextCapitalization.words,
       validator: (String? value) {
         if (value!.isEmpty) {
           return "Ce champ est requis !";
@@ -45,10 +84,12 @@ class UserFormState extends State<UserForm> {
     );
   }
 
-  Widget? _buildLastName() {
+  Widget? _buildLastName(Size size) {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Nom :"),
+      decoration: inputStyle(size, 'Votre nom', 'Nom', _prenomIcon(size)),
+      cursorColor: const Color(0XFF4FA3A5),
       controller: lastNameController,
+      
       validator: (String? value) {
         if (value!.isEmpty) {
           return "Ce champ est requis !";
@@ -58,9 +99,10 @@ class UserFormState extends State<UserForm> {
     );
   }
 
-  Widget? _buildEmail() {
+  Widget? _buildEmail(Size size) {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Email :"),
+      decoration: inputStyle(size, 'Votre email', 'Email', _emailIcon(size)),
+      cursorColor: const Color(0XFF4FA3A5),
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       validator: (String? value) {
@@ -75,10 +117,13 @@ class UserFormState extends State<UserForm> {
     );
   }
 
-  Widget? _buildPassword() {
+  Widget? _buildPassword(Size size) {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Mot de passe :"),
+      decoration: inputStyle(
+          size, 'Votre mot de passe', 'Mot de passe', _passwordIcon(size)),
+      cursorColor: const Color(0XFF4FA3A5),
       controller: passwordController,
+      obscureText: true,
       keyboardType: TextInputType.visiblePassword,
       validator: (String? value) {
         if (value!.isEmpty) {
@@ -92,10 +137,12 @@ class UserFormState extends State<UserForm> {
     );
   }
 
-  Widget? _buildConfirmPassword() {
+  Widget? _buildConfirmPassword(Size size) {
     return TextFormField(
-      decoration:
-          const InputDecoration(labelText: "Confirmer votre mot de passe :"),
+      decoration: inputStyle(size, 'Confirmez votre mot de passe',
+          'Confirmez le mot de passe', _passwordIcon(size)),
+      cursorColor: const Color(0XFF4FA3A5),
+      obscureText: true,
       controller: confirmPasswordController,
       keyboardType: TextInputType.visiblePassword,
       validator: (String? value) {
@@ -108,42 +155,78 @@ class UserFormState extends State<UserForm> {
     );
   }
 
-  Widget? _buildCategorie() {
+  Widget? _buildCategorie(Size size) {
     return Column(
       children: [
         const Text(
           "Vous êtes :",
         ),
-        ListTile(
-          title: const Text("Sourd/Sourde"),
-          leading: Radio<UserType>(
-              value: UserType.sourd,
-              groupValue: userType,
-              onChanged: (UserType? value) {
-                setState(() {
-                  userType = value;
-                });
-              }),
+        SizedBox(
+          height: size.height * 0.01,
         ),
-        ListTile(
-          title: const Text("Interprete"),
-          leading: Radio<UserType>(
-              value: UserType.interpret,
-              groupValue: userType,
-              onChanged: (UserType? value) {
-                setState(() {
-                  userType = value;
-                });
-              }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              children: [
+                Radio<UserType>(
+                    activeColor: const Color(0XFF4FA3A5),
+                    value: UserType.autre,
+                    groupValue: userType,
+                    onChanged: (UserType? value) {
+                      setState(() {
+                        userType = value;
+                      });
+                    }),
+                const Text('Autre'),
+              ],
+            ),
+            Row(
+              children: [
+                Radio<UserType>(
+                    activeColor: const Color(0XFF4FA3A5),
+                    value: UserType.sourd,
+                    groupValue: userType,
+                    onChanged: (UserType? value) {
+                      setState(() {
+                        userType = value;
+                      });
+                    }),
+                const Text('Sourd(e)'),
+              ],
+            ),
+            Row(
+              children: [
+                Radio<UserType>(
+                    activeColor: const Color(0XFF4FA3A5),
+                    value: UserType.interpret,
+                    groupValue: userType,
+                    onChanged: (UserType? value) {
+                      setState(() {
+                        userType = value;
+                      });
+                    }),
+                const Text('Interprète'),
+              ],
+            )
+          ],
         ),
       ],
     );
   }
 
   Widget? _buildLanguageSelection() {
-    return Card(
-      child: _buildMultipleLanguage(),
-    );
+    return OutlinedButton(
+        onPressed: () => {}, 
+        child: _buildMultipleLanguage()!,
+        style: OutlinedButton.styleFrom(
+          shape: const StadiumBorder(),
+          side: const BorderSide(
+            color: Color(0XFF4FA3A5),
+            width: 1.5,
+          )
+        ),
+      );
   }
 
   Widget? _buildMultipleLanguage() {
@@ -164,9 +247,7 @@ class UserFormState extends State<UserForm> {
       setState(() => this.languages = languages);
     };
 
-    return languages == null
-        ? _buildListLanguage(title: 'No languages', onTap: onTap)
-        : _buildListLanguage(title: languagesText, onTap: onTap);
+    return languages!.isEmpty ? _buildListLanguage(title: 'Choisissez...', onTap: onTap) : _buildListLanguage(title: languagesText, onTap: onTap);
   }
 
   Widget? _buildListLanguage({
@@ -181,43 +262,111 @@ class UserFormState extends State<UserForm> {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(color: Colors.black, fontSize: 18),
       ),
-      trailing: const Icon(Icons.arrow_drop_down, color: Colors.black),
+      trailing: const Icon(Icons.arrow_drop_down, color: Color(0XFF4FA3A5), size: 30,),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    final authService = Provider.of<AuthService>(context);
+    
     return Scaffold(
       appBar: AppBar(title: const Text("Inscrivez vous")),
       body: Container(
-        margin: const EdgeInsets.all(24),
+        margin: const EdgeInsets.all(15),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                _buildName()!,
-                _buildLastName()!,
-                _buildEmail()!,
-                _buildPassword()!,
-                _buildConfirmPassword()!,
-                _buildCategorie()!,
-                _buildLanguageSelection()!,
+                SvgPicture.asset(
+                  'assets/images/illustration/undraw_welcome_re_h3d9.svg',
+                  height: size.height * 0.20,
+                ),
                 const SizedBox(
-                  height: 100,
+                  height: 20,
+                ),
+                _buildName(size)!,
+                const SizedBox(
+                  height: 20,
+                ),
+                _buildLastName(size)!,
+                const SizedBox(
+                  height: 20,
+                ),
+                _buildEmail(size)!,
+                const SizedBox(
+                  height: 20,
+                ),
+                _buildPassword(size)!,
+                const SizedBox(
+                  height: 20,
+                ),
+                _buildConfirmPassword(size)!,
+                const SizedBox(
+                  height: 20,
+                ),
+                _buildCategorie(size)!,
+                const SizedBox(
+                  height: 20,
+                ),
+                userType != UserType.autre ? _buildLanguageSelection()! : const SizedBox(height: 0.01,),
+
+                const SizedBox(
+                  height: 30,
                 ),
                 ElevatedButton(
-                    onPressed: () async {
-                      signUp(emailController.text, passwordController.text);
-                    },
-                    child: const Text(
-                      "Submit",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    )),
+                  onPressed: () async {
+
+                    if (_formKey.currentState!.validate()) {
+
+                      userModel =  await authService.createUser(nameController.text, lastNameController.text, emailController.text, passwordController.text, userType, languages);
+
+                      nameController.clear();
+                      lastNameController.clear();
+                      emailController.clear();
+                      passwordController.clear();
+                      confirmPasswordController.clear();
+                      languages = [];
+
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => NavBar(
+                                    userModel: userModel,
+                                  ))));
+                    }
+                  },
+                  child: const Text(
+                    "S'inscrire",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  style: buttonStyle(size),
+                ),
+                const SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Vous avez déjà un compte ? "),
+                      TextButton(
+                        onPressed: () => {
+                          Navigator.pop(context)
+                        },
+                        child: const Text(
+                          "Cliquez ici",
+                          style: TextStyle(
+                              color: Color(0XFF4FA3A5),
+                              decoration: TextDecoration.underline),
+                        ))
+                    ],
+                  )
               ],
             ),
           ),
@@ -225,25 +374,4 @@ class UserFormState extends State<UserForm> {
       ),
     );
   }
-
-  void signUp(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-
-      nameController.clear();
-      lastNameController.clear();
-      emailController.clear();
-      passwordController.clear();
-      confirmPasswordController.clear();
-      languages = [];
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: ((context) => NavBar(
-                    userModel: userModel,
-                  ))));
-    }
-  }
 }
-  
-

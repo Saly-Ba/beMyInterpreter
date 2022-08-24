@@ -8,10 +8,20 @@ class AuthService {
 
   Future<UserModel?> signIn(
       String? email, String? password) async {
-    final credential = await _firebaseAuth.signInWithEmailAndPassword(
+
+    try {
+      final credential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email!, password: password!);
 
-    return UserManager.getUser(credential.user!.uid);
+        Fluttertoast.showToast(msg: "Bienvenue !");
+
+      return UserManager.getUser(credential.user!.uid);
+      
+    }
+    on auth.FirebaseAuthException catch (_) {
+      Fluttertoast.showToast(
+          msg: "Cet utilisateur n'existe pas encore !");
+    }
   }
 
   Future<UserModel?> createUser(
@@ -36,12 +46,14 @@ class AuthService {
             meetings: []);
 
         UserManager.createUser(userModel);
+
+        return userModel;
       });
 
       Fluttertoast.showToast(msg: "Votre compte a été créer avec succes !");
-    } on auth.FirebaseAuthException catch (_) {
+    } on auth.FirebaseAuthException catch (e) {
       Fluttertoast.showToast(
-          msg: "Cet email est déjà présent dans notre base de données !");
+          msg: e.message! );
     }
   }
 

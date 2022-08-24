@@ -19,7 +19,7 @@ class UserModel {
     required this.lastName,
     required this.email,
     required this.password,
-    required this.languages,
+    this.languages,
     required this.userType,
     this.meetings,
   });
@@ -28,6 +28,12 @@ class UserModel {
 
   set setMeetings(List<Meeting?>? meetings) {
     this.meetings = meetings;
+  }
+
+  List<Language?>? get getLanguages => languages;
+
+  set setLanguages(List<Language?>? languages) {
+    this.languages = languages;
   }
 
   UserModel._({
@@ -81,6 +87,7 @@ class UserModel {
 enum UserType {
   interpret,
   sourd,
+  autre,
 }
 
 class Language {
@@ -108,20 +115,26 @@ class Language {
 }
 
 class Meeting {
-  final int? id;
+  final String? id;
   final String? title;
   final DateTime? start;
   final DateTime? end;
   bool? validate = false;
   final Language? language;
+  final String? creator;
+  final List<String?>? participants;
+  bool? status = false;
 
   Meeting({
-    required this.id,
+    this.id,
     required this.title,
     required this.start,
     required this.end,
     required this.language,
+    required this.creator,
+    required this.participants,
     this.validate,
+    this.status,
   });
 
   bool? get getValidate => validate;
@@ -130,13 +143,21 @@ class Meeting {
     validate = validation;
   }
 
+  bool? get getStatus => status;
+
+  set setStatus(bool? status) {
+    status = status;
+  }
+
   Meeting._(
       {this.id,
       this.title,
       this.start,
       this.end,
       this.validate,
-      this.language});
+      this.language,
+      this.creator,
+      this.participants,});
 
   static Future<Meeting> create(map) async {
     return Meeting._(
@@ -149,6 +170,8 @@ class Meeting {
         return Language.fromMap(value);
       }),
       validate: map['validate'],
+      creator: map['creator'],
+      participants: map['participants'] is Iterable ? List.from(map['participants']) : null,
     );
   }
 
@@ -160,6 +183,8 @@ class Meeting {
       'end': end,
       'language': language,
       'validate': validate,
+      'creator': creator,
+      'participants': participants,
     };
   }
 }

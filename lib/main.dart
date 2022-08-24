@@ -1,22 +1,13 @@
 import 'package:be_my_interpreter_2/auth_service.dart';
 import 'package:be_my_interpreter_2/firebase_options.dart';
 import 'package:be_my_interpreter_2/route_generator.dart';
-import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-import 'cameraController.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Obtain a list of the available cameras on the device.
-  final cameras = await availableCameras();
-
-  // Get a specific camera from the list of available cameras.
-  final firstCamera = cameras.first;
   
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -32,9 +23,26 @@ class MyApp extends StatelessWidget {
     return MultiProvider(providers: [
       Provider<AuthService>(create: (_) => AuthService(),),
     ], 
-    child: const 
+    child:
     MaterialApp(
-      //theme: ThemeData.dark(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        fontFamily: "Muli",
+        appBarTheme: const AppBarTheme(
+          color: Color(0XFF4FA3A5),
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 18, fontFamily: "Muli"),
+          centerTitle: true,
+        ),
+        textTheme: const TextTheme(
+          bodyText1: TextStyle(color: Colors.black),
+          bodyText2: TextStyle(color: Colors.black),
+        ),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryColor: const Color(0XFF4FA3A5),
+      ),
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,) 
     );

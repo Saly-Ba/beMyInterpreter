@@ -6,34 +6,39 @@ class MeetingsManager {
   FirebaseFirestore meetings = FirebaseFirestore.instance;
   Meeting? meeting;
 
-  void createMeeting(Meeting meeting) async {
-    await meetings.collection("meeting").doc((meeting.id).toString()).set({
-      'id': meeting.id,
+  Future<String> createMeeting(Meeting meeting) async {
+    var id = meetings.collection("meetings").doc().id;
+
+    await meetings.collection("meetings").doc(id).set({
+      'id' : id,
       'title': meeting.title,
       'start': meeting.start,
       'end': meeting.end,
       'language': meetings.doc("langues/" + (meeting.language!.id).toString()),
       'validate': meeting.validate,
+      'creator' : meeting.creator,
+      'participants' : meeting.participants,
     });
 
     Fluttertoast.showToast(msg: "La reunion a été créer avec succes !");
+
+    return id;
   }
 
   void updateMeeting(Meeting meeting) async {
-    await meetings.collection("meeting").doc((meeting.id).toString()).update({
-      'id': meeting.id,
+    await meetings.collection("meetings").doc((meeting.id).toString()).update({
       'title': meeting.title,
       'start': meeting.start,
       'end': meeting.end,
       'language': meetings.doc("langues/" + (meeting.language!.id).toString()),
-      'validate': meeting.validate,
+      'participants' : meeting.participants,
     });
 
     Fluttertoast.showToast(msg: "La reunion a été modifier avec succes !");
   }
 
   void deleteMeeting(Meeting meeting) async {
-    await meetings.collection("meeting").doc((meeting.id).toString()).delete();
+    await meetings.collection("meetings").doc((meeting.id).toString()).delete();
   }
 }
 
@@ -62,7 +67,6 @@ class UserManager {
 
   static void updateUser(UserModel user) async {
     dynamic lan = [];
-    dynamic meet = [];
 
     if (user.languages!.isNotEmpty) {
       for (var element in user.languages!) {
@@ -70,21 +74,11 @@ class UserManager {
       }
     }
 
-    if (user.meetings!.isNotEmpty) {
-      for (var elt in user.meetings!) {
-        meet.add(firebaseFirestore.doc("meetings/" + (elt!.id).toString()));
-      }
-    }
-
     await firebaseFirestore.collection('users').doc(user.id).update({
-      "id": user.id,
       "firstName": user.firstName,
       "lastName": user.lastName,
       "email": user.email,
-      "password": user.password,
       "languages": lan,
-      "userType": user.userType!.name,
-      "meetings": meet,
     });
   }
 
@@ -92,7 +86,34 @@ class UserManager {
     var user = await firebaseFirestore.collection("users").doc(id).get();
     return UserModel.create(user);
   }
+
+  static Future<UserModel?> getUsersEmail(String email) async {
+    Future<UserModel?>? user;
+    return await firebaseFirestore.collection('users').where('email', isEqualTo: email).get().then((value) {
+      if(value.docs.isNotEmpty){
+        user = UserModel.create(value.docs[0].data());
+      }
+      
+      return user;
+    });
+  }
+
+  static void updateUserMeetings(String id, String idMeet) async{
+    try{
+      await firebaseFirestore.collection("users").doc(id).update({
+        'meetings' : FieldValue.arrayUnion([firebaseFirestore.doc("meetings/" + idMeet)])
+      });
+
+        Fluttertoast.showToast(msg: "La reunion a été créer avec succes !");
+    }on FirebaseException catch (e) {
+      Fluttertoast.showToast(
+          msg: e.message! );
+    }
+    
+  }
 }
+
+
 
 class LanguageManager {
   FirebaseFirestore languages = FirebaseFirestore.instance;

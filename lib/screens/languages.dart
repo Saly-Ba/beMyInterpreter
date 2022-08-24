@@ -82,29 +82,6 @@ class LanguageListState extends State<LanguageList> {
         );
       },
     );
-
-    /*Scaffold(
-      appBar: AppBar(
-        title: const Text('Choisissez vos langues'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-                /*children: languages!.map((language) {
-                final isSelected = localList!.contains(language);
-                return LanguageListView(
-                  language: language,
-                  isSelected: isSelected,
-                  onSelectedLanguage: selectLanguage,
-                );
-              }).toList(),*/
-                ),
-          ),
-          buildSelectionButton(context)!,
-        ],
-      ),
-    );*/
   }
 
   Widget? buildSelectionButton(BuildContext context) {

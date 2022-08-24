@@ -20,7 +20,7 @@ class NavBarState extends State<NavBar> {
 
     final screens = [
       Home(userModel: widget.userModel,),
-      const ListReunion(),
+      ListReunion(currentUser: widget.userModel,),
   ];
 
     final items = <Widget>[
@@ -37,11 +37,11 @@ class NavBarState extends State<NavBar> {
         child: CurvedNavigationBar(
           key: navigationKey,
           backgroundColor: Colors.transparent,
-          color: Colors.blue,
-          buttonBackgroundColor: Colors.green,
-          height: 60,
+          color: const Color(0XFF4FA3A5),
+          buttonBackgroundColor: const Color(0XFF63C5EA),
+          height: 70,
           animationCurve: Curves.easeInOut,
-          animationDuration: const Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 200),
           items: items,
           onTap: (index) => setState(() {
             this.index = index;

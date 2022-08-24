@@ -4,6 +4,7 @@ import 'package:be_my_interpreter_2/models.dart';
 import 'package:be_my_interpreter_2/screens/meeting_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -41,7 +42,8 @@ class HomeState extends State<Home> {
 }
 
 class ListReunion extends StatefulWidget {
-  const ListReunion({Key? key}) : super(key: key);
+  const ListReunion({Key? key, required this.currentUser}) : super(key: key);
+  final UserModel? currentUser;
 
   @override
   ListReunionState createState() => ListReunionState();
@@ -51,70 +53,100 @@ class ListReunionState extends State<ListReunion> {
   MeetingsManager meetingsManager = MeetingsManager();
   Meeting? meeting;
   final Stream<QuerySnapshot> _meetingsData =
-      FirebaseFirestore.instance.collection("meeting").snapshots();
+      FirebaseFirestore.instance.collection("meetings").snapshots();
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return StreamBuilder(
         stream: _meetingsData,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return const Text('Something went wrong');
+            return Scaffold(
+              body: Center(
+                  child: Column(
+                children: [
+                  SvgPicture.asset('assets/images/illustration/undraw_server_down_s-4-lk.svg', height: size.height * 0.4,)
+                ],
+              )),
+            );
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(
-                child: Text("loading"),
+                  child: CircularProgressIndicator(
+                color: Color(0XFF4FA3A5),
+              )),
+            );
+          }
+          if (!snapshot.hasData) {
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/illustration/undraw_no_data_re_kwbl.svg',
+                      height: size.height * 0.40,
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Vos réunions'),
+              ),
+              body: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: widget.currentUser!.meetings!.isNotEmpty ? Column(children: [
+                  SvgPicture.asset(
+                    'assets/images/illustration/undraw_my_documents_re_13dc.svg',
+                    height: size.height * 0.25,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: ListView(
+                    children:
+                        widget.currentUser!.meetings!.map((meet) {
+                              meeting = meet;
+
+                              return ListViewMeeting(
+                                meeting: meeting!,
+                                onTapInfo: showMeetingInfo,
+                                onDelete: deleteMeeting,
+                                onUpdate: updateMeeting,
+                              );
+                            }).toList(),
+                  )) 
+                ]) : Center(
+                  child: SvgPicture.asset(
+                    'assets/images/illustration/undraw_empty_re_opql.svg',
+                    height: size.height * 0.25,
+                  ),
+                )
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreerReunion(
+                                currentUser: widget.currentUser,
+                              )));
+                },
+                backgroundColor: const Color(0XFF4FA3A5),
+                child: const Icon(
+                  Icons.add,
+                  size: 35,
+                  color: Colors.white,
+                ),
               ),
             );
           }
-
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Vos reunions'),
-            ),
-            body: Column(children: [
-              Expanded(
-                  child: ListView(
-                children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                  Map<String, dynamic> data =
-                      document.data() as Map<String, dynamic>;
-
-                  return FutureBuilder(
-                      future: Meeting.create(data),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Meeting> snapshot) {
-                        if (snapshot.hasData) {
-                          meeting = snapshot.data;
-
-                          return ListViewMeeting(
-                            meeting: meeting!,
-                            onTapInfo: showMeetingInfo,
-                            onDelete: deleteMeeting,
-                            onUpdate: updateMeeting,
-                          );
-                        } else {
-                          return const Text("No data in there");
-                        }
-                      });
-                }).toList(),
-              )),
-            ]),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CreerReunion()));
-              },
-              backgroundColor: Colors.green,
-              child: const Icon(
-                Icons.add,
-                size: 35,
-                color: Colors.white,
-              ),
-            ),
-          );
         });
   }
 
@@ -122,14 +154,13 @@ class ListReunionState extends State<ListReunion> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(meeting.title!),
-              content: Text("Debut : " +
-                  meeting.start.toString() +
-                  "\nFin : " +
-                  meeting.end.toString() +
-                  "\nLangue : " +
-                  meeting.language!.language)
-            ));
+            title: Text(meeting.title!),
+            content: Text("Debut : " +
+                meeting.start.toString() +
+                "\nFin : " +
+                meeting.end.toString() +
+                "\nLangue : " +
+                meeting.language!.language)));
   }
 
   void deleteMeeting(Meeting meeting) {
@@ -140,7 +171,10 @@ class ListReunionState extends State<ListReunion> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => UpdateMeeting(meeting: meeting)));
+            builder: (context) => UpdateMeeting(
+                  meeting: meeting,
+                  currentUser: widget.currentUser,
+                )));
   }
 }
 
@@ -171,10 +205,15 @@ class ListViewMeeting extends StatelessWidget {
             width: 100.0,
             child: Row(children: [
               IconButton(
-                  icon: const Icon(Icons.edit, size: 30, color: Colors.green),
+                  icon: const Icon(
+                    Icons.edit,
+                    size: 30,
+                    color: Color(0XFF4FA3A5),
+                  ),
                   onPressed: () => onUpdate(meeting)),
               IconButton(
-                  icon: const Icon(Icons.delete, size: 30, color: Colors.red),
+                  icon: const Icon(Icons.delete,
+                      size: 30, color: Color(0XFFee6f86)),
                   onPressed: () => onDelete(meeting)),
             ])));
   }

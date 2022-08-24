@@ -1,6 +1,10 @@
 //import 'package:be_my_interpreter/models.dart';
 import 'package:be_my_interpreter_2/auth_service.dart';
+import 'package:be_my_interpreter_2/screens/inscription.dart';
+import 'package:be_my_interpreter_2/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 //import 'package:firebase_database/firebase_database.dart';
 
@@ -16,9 +20,22 @@ class LoginState extends State<Login> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Widget? _buildEmail() {
+  Widget _emailIcon(Size size){
+    return Padding(
+          padding: EdgeInsets.fromLTRB(
+              0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
+          child: const Icon(
+            Icons.email_outlined,
+            color: Color(0XFF4FA3A5),
+            size: 27.5,
+          ),
+        );
+  }
+
+  Widget? _buildEmail(Size? size) {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Email :"),
+      decoration: inputStyle(size, 'Votre email', 'Email', _emailIcon(size!)),
+      cursorColor: const Color(0XFF4FA3A5),
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       validator: (String? value) {
@@ -33,11 +50,24 @@ class LoginState extends State<Login> {
     );
   }
 
-  Widget? _buildPassword() {
+  Widget _passwordIcon(Size size){
+    return Padding(
+          padding: EdgeInsets.fromLTRB(
+              0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
+          child: const Icon(
+            Icons.lock_outline,
+            color: Color(0XFF4FA3A5),
+            size: 27.5,
+          ),
+        );
+  }
+
+  Widget? _buildPassword(Size? size) {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Mot de passe :"),
+      decoration: inputStyle(size, 'Votre mot de passe', 'Mot de passe', _passwordIcon(size!)),
+      cursorColor: const Color(0XFF4FA3A5),
       controller: passwordController,
-      keyboardType: TextInputType.visiblePassword,
+      obscureText: true,
       validator: (String? value) {
         if (value!.isEmpty) {
           return "Ce champ est requis";
@@ -52,38 +82,116 @@ class LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
+        title: const Text("Log In"),
       ),
-      body: Center(
+      body: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.all(size.width * 0.03),
           child: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _buildEmail()!,
-            _buildPassword()!,
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                onPressed: () => {
-                      if (_formKey.currentState!.validate())
-                        {
-                          authService.signIn(
-                              emailController.text, passwordController.text),
-                          emailController.clear(),
-                          passwordController.clear(),
-                        }
-                    },
-                child: const Text("Log In"))
-          ],
-        )),
-      )),
+            key: _formKey,
+            child: SingleChildScrollView(
+                child: Expanded(
+              child: Column(
+                children: <Widget>[
+                  SvgPicture.asset(
+                    'assets/images/illustration/undraw_enter_uhqk.svg',
+                    height: size.height * 0.32,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    'Be My Interpreter',
+                    style: TextStyle(
+                      color: Color(0XFF4FA3A5),
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Satisfy',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 7.5,
+                  ),
+                  const Text(
+                    'Connectez vous à votre compte via votre email et  votre mot de passe',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _buildEmail(size)!,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _buildPassword(size)!,
+                  const SizedBox(
+                    height: 0.2,
+                  ),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      TextButton(
+                          onPressed: () => {},
+                          child: const Text(
+                            "Mot de passe oublié",
+                            style: TextStyle(
+                                color: Color(0XFF4FA3A5),
+                                decoration: TextDecoration.underline),
+                          )),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 0.6,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.9,
+                    child: ElevatedButton(
+                      onPressed: () => {
+                        if (_formKey.currentState!.validate())
+                          {
+                            authService.signIn(
+                                emailController.text, passwordController.text),
+                            emailController.clear(),
+                            passwordController.clear(),
+                          }
+                      },
+                      child: const Text("Se connecter"),
+                      style: buttonStyle(size)
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                      "Vous n'avez pas de compte ? "),
+                    TextButton(
+                      onPressed: () => {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const UserForm(),))
+                      },
+                      child: const Text(
+                        "Créer un compte",
+                        style: TextStyle(
+                            color: Color(0XFF4FA3A5),
+                            decoration: TextDecoration.underline),
+                      ))
+                    ],
+                  )
+                  
+                ],
+              ),
+            )),
+          ),
+        ),
+      ),
     );
   }
 }
