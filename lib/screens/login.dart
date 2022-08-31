@@ -96,8 +96,7 @@ class LoginState extends State<Login> {
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
-                child: Expanded(
-              child: Column(
+                child: Column(
                 children: <Widget>[
                   SvgPicture.asset(
                     'assets/images/illustration/undraw_enter_uhqk.svg',
@@ -188,7 +187,7 @@ class LoginState extends State<Login> {
                   
                 ],
               ),
-            )),
+            ),
           ),
         ),
       ),

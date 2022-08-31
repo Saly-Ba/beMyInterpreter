@@ -61,12 +61,12 @@ class UserModel {
         });
       })),
       userType: UserType.values.byName(map['userType']),
-      meetings:
+      meetings: map['meetings'] is Iterable ?
           await Future.wait((map['meetings'] as List<dynamic>).map((e) async {
         return await (e as DocumentReference).get().then((value) async {
           return await Meeting.create(value.data());
         });
-      })),
+      })) : [],
     );
   }
 

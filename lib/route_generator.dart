@@ -1,3 +1,4 @@
+import 'package:be_my_interpreter_2/webRTC.dart';
 import 'package:be_my_interpreter_2/wrapper.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => const Wrapper());
+        return MaterialPageRoute(builder: (_) =>  WebRTC());
       /*case '/langues':
         if (args is String) {
           return MaterialPageRoute(builder: (_) => LanguesList(user: args));
