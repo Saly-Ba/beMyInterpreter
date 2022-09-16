@@ -51,6 +51,8 @@ dependencies:
   path_provider: ^2.0.11
   path: ^1.8.2
   flutter_svg: ^1.1.1+1
+  flutter_bloc: ^8.1.1
+  bloc_provider: ^1.0.0
 
 dev_dependencies:
   flutter_test:
