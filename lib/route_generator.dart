@@ -1,3 +1,5 @@
+import 'package:be_my_interpreter_2/jitsi.dart';
+import 'package:be_my_interpreter_2/screens/exemples/list_reunion_interprete.dart';
 import 'package:be_my_interpreter_2/webRTC.dart';
 import 'package:be_my_interpreter_2/wrapper.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,7 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) =>  WebRTC());
+        return MaterialPageRoute(builder: (_) =>  const Meeting());
       /*case '/langues':
         if (args is String) {
           return MaterialPageRoute(builder: (_) => LanguesList(user: args));

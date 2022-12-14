@@ -14,7 +14,7 @@ class MeetingsManager {
       'title': meeting.title,
       'start': meeting.start,
       'end': meeting.end,
-      'language': meetings.doc("langues/" + (meeting.language!.id).toString()),
+      'language': meetings.doc("langues/${meeting.language!.id}"),
       'validate': meeting.validate,
       'creator' : meeting.creator,
       'participants' : meeting.participants,
@@ -30,7 +30,7 @@ class MeetingsManager {
       'title': meeting.title,
       'start': meeting.start,
       'end': meeting.end,
-      'language': meetings.doc("langues/" + (meeting.language!.id).toString()),
+      'language': meetings.doc("langues/${meeting.language!.id}"),
       'participants' : meeting.participants,
     });
 
@@ -50,7 +50,7 @@ class UserManager {
 
     if (user.languages!.isNotEmpty) {
       for (var element in user.languages!) {
-        lan.add(firebaseFirestore.doc("langues/" + (element!.id).toString()));
+        lan.add(firebaseFirestore.doc("langues/${element!.id}"));
       }
     }
     await firebaseFirestore.collection('users').doc(user.id).set({
@@ -70,7 +70,7 @@ class UserManager {
 
     if (user.languages!.isNotEmpty) {
       for (var element in user.languages!) {
-        lan.add(firebaseFirestore.doc("langues/" + (element!.id).toString()));
+        lan.add(firebaseFirestore.doc("langues/${element!.id}"));
       }
     }
 
@@ -101,7 +101,7 @@ class UserManager {
   static void updateUserMeetings(String id, String idMeet) async{
     try{
       await firebaseFirestore.collection("users").doc(id).update({
-        'meetings' : FieldValue.arrayUnion([firebaseFirestore.doc("meetings/" + idMeet)])
+        'meetings' : FieldValue.arrayUnion([firebaseFirestore.doc("meetings/$idMeet")])
       });
 
         Fluttertoast.showToast(msg: "La reunion a été créer avec succes !");

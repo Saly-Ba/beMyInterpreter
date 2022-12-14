@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path/path.dart';
 import 'dart:math';
@@ -15,6 +14,7 @@ import 'dart:math';
 import 'package:provider/provider.dart';
 
 import '../auth_service.dart';
+import '../constantes/theme_variable.dart';
 
 class CreerReunion extends StatefulWidget {
   final UserModel? currentUser;
@@ -46,7 +46,7 @@ class CreerReunionState extends State<CreerReunion> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.title,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -58,7 +58,7 @@ class CreerReunionState extends State<CreerReunion> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.email_outlined,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -108,17 +108,17 @@ class CreerReunionState extends State<CreerReunion> {
     };
 
     return OutlinedButton(
-        onPressed: () => {}, 
-        child: language == null
-        ? _buildListLanguage(title: 'Choisissez une langue', onTap: onTap)!
-        : _buildListLanguage(title: language!.language, onTap: onTap)!,
+        onPressed: () => {},
         style: OutlinedButton.styleFrom(
           shape: const StadiumBorder(),
           side: const BorderSide(
-            color: Color(0XFF4FA3A5),
+            color: APP_PRIMARY,
             width: 1.5,
           )
-        ),
+        ), 
+        child: language == null
+        ? _buildListLanguage(title: 'Choisissez une langue', onTap: onTap)!
+        : _buildListLanguage(title: language!.language, onTap: onTap)!,
       );
   }
 
@@ -135,7 +135,7 @@ class CreerReunionState extends State<CreerReunion> {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(color: Colors.black, fontSize: 18),
       ),
-      trailing: const Icon(Icons.arrow_drop_down, color: Color(0XFF4FA3A5)),
+      trailing: const Icon(Icons.arrow_drop_down, color: APP_PRIMARY),
     );
   }
 
@@ -228,8 +228,8 @@ class CreerReunionState extends State<CreerReunion> {
                                       Navigator.pop(context);
                                     }
                                   }),
-                                  child: const Text("Ajouter"),
                                   style: buttonStyle(size),
+                                  child: const Text("Ajouter"),
                                 ),
                               ],
                             ),
@@ -273,7 +273,7 @@ class UpdateMeetingState extends State<UpdateMeeting> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.title,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -285,7 +285,7 @@ class UpdateMeetingState extends State<UpdateMeeting> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.email_outlined,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -345,17 +345,17 @@ class UpdateMeetingState extends State<UpdateMeeting> {
     };
 
     return OutlinedButton(
-        onPressed: () => {}, 
-        child: language == null
-        ? _buildListLanguage(title: 'Choisissez une langue', onTap: onTap)!
-        : _buildListLanguage(title: language!.language, onTap: onTap)!,
+        onPressed: () => {},
         style: OutlinedButton.styleFrom(
           shape: const StadiumBorder(),
           side: const BorderSide(
-            color: Color(0XFF4FA3A5),
+            color: APP_PRIMARY,
             width: 1.5,
           )
-        ),
+        ), 
+        child: language == null
+        ? _buildListLanguage(title: 'Choisissez une langue', onTap: onTap)!
+        : _buildListLanguage(title: language!.language, onTap: onTap)!,
       );
   }
 
@@ -452,8 +452,8 @@ class UpdateMeetingState extends State<UpdateMeeting> {
                                 Navigator.pop(context);
                               }
                             }),
-                            child: const Text("Modifier"),
                             style: buttonStyle(size),
+                            child: const Text("Modifier"),
                           ),
                         ],
                       ),
@@ -524,6 +524,13 @@ class _FormDatePickerState extends State<_FormDatePicker> {
     
               widget.onChanged(newDate);
       },
+      style: TextButton.styleFrom(
+        shape: const StadiumBorder(),
+        side: const BorderSide(
+          color: APP_PRIMARY,
+          width: 1.5,
+        )
+      ),
       child: Container(
         padding: const EdgeInsets.all(5),
         child: Row(
@@ -536,32 +543,23 @@ class _FormDatePickerState extends State<_FormDatePicker> {
               children: [
                 Text(
                   widget.input,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  intl.DateFormat.yMd().format(date!) +
-                      " à " +
-                      intl.DateFormat.Hms().format(date!),
+                  "${intl.DateFormat('EEEE, d MMMM y').format(date!)} à ${intl.DateFormat('H:m').format(date!)}",
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
               ],
             ),
             const Icon(
                 Icons.calendar_today,
-                color: Color(0XFF4FA3A5),
+                color: APP_PRIMARY,
                 size: 26,
             ),
             
           ],
         ),
-      ),
-      style: TextButton.styleFrom(
-        shape: const StadiumBorder(),
-        side: const BorderSide(
-          color: Color(0XFF4FA3A5),
-          width: 1.5,
-        )
       ),
     );
   }

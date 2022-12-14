@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../constantes/theme_variable.dart';
+
 InputDecoration inputStyle(
     Size? size, String hintText, String labelText, Widget widget) {
   return InputDecoration(
@@ -17,7 +19,7 @@ InputDecoration inputStyle(
     focusedBorder: const OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(30.0)),
       borderSide: BorderSide(
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         width: 2.0,
       ),
       gapPadding: 5,
@@ -28,14 +30,14 @@ InputDecoration inputStyle(
       gapPadding: 5,
     ),
     floatingLabelBehavior: FloatingLabelBehavior.always,
-    floatingLabelStyle: const TextStyle(color: Color(0XFF4FA3A5)),
+    floatingLabelStyle: const TextStyle(color: APP_PRIMARY),
     errorStyle: const TextStyle(color: Colors.red),
     contentPadding: const EdgeInsets.symmetric(
       horizontal: 40,
       vertical: 20,
     ),
     suffixIcon: widget,
-    focusColor: const Color(0XFF4FA3A5),
+    focusColor: APP_PRIMARY,
     hintText: hintText,
     labelText: labelText,
   );
@@ -43,7 +45,7 @@ InputDecoration inputStyle(
 
 ButtonStyle buttonStyle(Size size) {
   return ElevatedButton.styleFrom(
-    primary: const Color(0XFF4FA3A5),
+    primary: APP_PRIMARY,
     padding: const EdgeInsets.all(5.0),
     shape: const StadiumBorder(),
     minimumSize: const Size.fromHeight(43),
@@ -68,7 +70,7 @@ class AccessDenied extends StatelessWidget {
             const Text(
               'Be My Interpreter',
               style: TextStyle(
-                color: Color(0XFF4FA3A5),
+                color: APP_PRIMARY,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -82,9 +84,9 @@ class AccessDenied extends StatelessWidget {
             ),
             FloatingActionButton(onPressed: () => {
               Navigator.pop(context),
-            }, 
+            },
+            backgroundColor: APP_PRIMARY, 
             child:  const Icon(Icons.arrow_back, color: Colors.white,),
-            backgroundColor: const Color(0XFF4FA3A5),
             )
            
           ],

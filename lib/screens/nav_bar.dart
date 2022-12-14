@@ -3,6 +3,8 @@ import 'package:be_my_interpreter_2/screens/home.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../constantes/theme_variable.dart';
+
 class NavBar extends StatefulWidget {
   final UserModel? userModel;
   const NavBar({Key? key, this.userModel}) : super(key: key);
@@ -37,7 +39,7 @@ class NavBarState extends State<NavBar> {
         child: CurvedNavigationBar(
           key: navigationKey,
           backgroundColor: Colors.transparent,
-          color: const Color(0XFF4FA3A5),
+          color: APP_PRIMARY,
           buttonBackgroundColor: const Color(0XFF63C5EA),
           height: 70,
           animationCurve: Curves.easeInOut,

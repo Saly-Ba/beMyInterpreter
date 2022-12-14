@@ -2,6 +2,8 @@ import 'package:be_my_interpreter_2/db_manager.dart';
 import 'package:be_my_interpreter_2/models.dart';
 import 'package:flutter/material.dart';
 
+import '../constantes/theme_variable.dart';
+
 class EmailChips extends StatefulWidget {
   final String? email;
   const EmailChips({Key? key, required this.email}) : super(key: key);
@@ -21,7 +23,7 @@ class _EmailChipsState extends State<EmailChips> {
 
         if(snapshot.connectionState == ConnectionState.waiting){
           return const Center(
-            child: Chip(label: Text('...',  style: TextStyle(color: Colors.white)), backgroundColor: Color(0XFF4FA3A5),),
+            child: Chip(label: Text('...',  style: TextStyle(color: Colors.white)), backgroundColor: APP_PRIMARY,),
           );
         }
 
@@ -30,7 +32,7 @@ class _EmailChipsState extends State<EmailChips> {
           if(snapshot.hasData){
             userModel = snapshot.data!;
 
-            return Chip(label: Text(userModel!.firstName!+' '+userModel!.lastName!, style: const TextStyle(color: Colors.white)), backgroundColor: const Color(0XFF4FA3A5),);
+            return Chip(label: Text('${userModel!.firstName!} ${userModel!.lastName!}', style: const TextStyle(color: Colors.white)), backgroundColor: APP_PRIMARY,);
           }else {
             return const Center(
               child: Chip(label: Text('Pas de donées', style: TextStyle(color: Colors.white),

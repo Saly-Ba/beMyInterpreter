@@ -4,8 +4,9 @@ import 'package:be_my_interpreter_2/screens/inscription.dart';
 import 'package:be_my_interpreter_2/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+
+import '../constantes/theme_variable.dart';
 //import 'package:firebase_database/firebase_database.dart';
 
 class Login extends StatefulWidget {
@@ -26,7 +27,7 @@ class LoginState extends State<Login> {
               0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
           child: const Icon(
             Icons.email_outlined,
-            color: Color(0XFF4FA3A5),
+            color: APP_PRIMARY,
             size: 27.5,
           ),
         );
@@ -35,7 +36,7 @@ class LoginState extends State<Login> {
   Widget? _buildEmail(Size? size) {
     return TextFormField(
       decoration: inputStyle(size, 'Votre email', 'Email', _emailIcon(size!)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       validator: (String? value) {
@@ -56,7 +57,7 @@ class LoginState extends State<Login> {
               0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
           child: const Icon(
             Icons.lock_outline,
-            color: Color(0XFF4FA3A5),
+            color: APP_PRIMARY,
             size: 27.5,
           ),
         );
@@ -65,7 +66,7 @@ class LoginState extends State<Login> {
   Widget? _buildPassword(Size? size) {
     return TextFormField(
       decoration: inputStyle(size, 'Votre mot de passe', 'Mot de passe', _passwordIcon(size!)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       controller: passwordController,
       obscureText: true,
       validator: (String? value) {
@@ -108,7 +109,7 @@ class LoginState extends State<Login> {
                   const Text(
                     'Be My Interpreter',
                     style: TextStyle(
-                      color: Color(0XFF4FA3A5),
+                      color: APP_PRIMARY,
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Satisfy',
@@ -140,7 +141,7 @@ class LoginState extends State<Login> {
                           child: const Text(
                             "Mot de passe oublié",
                             style: TextStyle(
-                                color: Color(0XFF4FA3A5),
+                                color: APP_PRIMARY,
                                 decoration: TextDecoration.underline),
                           )),
                     ],
@@ -160,8 +161,8 @@ class LoginState extends State<Login> {
                             passwordController.clear(),
                           }
                       },
-                      child: const Text("Se connecter"),
-                      style: buttonStyle(size)
+                      style: buttonStyle(size),
+                      child: const Text("Se connecter")
                     ),
                   ),
                   const SizedBox(
@@ -179,7 +180,7 @@ class LoginState extends State<Login> {
                       child: const Text(
                         "Créer un compte",
                         style: TextStyle(
-                            color: Color(0XFF4FA3A5),
+                            color: APP_PRIMARY,
                             decoration: TextDecoration.underline),
                       ))
                     ],

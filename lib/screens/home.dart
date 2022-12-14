@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../constantes/theme_variable.dart';
+
 class Home extends StatefulWidget {
   final UserModel? userModel;
   const Home({Key? key, this.userModel}) : super(key: key);
@@ -76,7 +78,7 @@ class ListReunionState extends State<ListReunion> {
             return const Scaffold(
               body: Center(
                   child: CircularProgressIndicator(
-                color: Color(0XFF4FA3A5),
+                color: APP_PRIMARY,
               )),
             );
           }
@@ -138,7 +140,7 @@ class ListReunionState extends State<ListReunion> {
                                 currentUser: widget.currentUser,
                               )));
                 },
-                backgroundColor: const Color(0XFF4FA3A5),
+                backgroundColor: APP_PRIMARY,
                 child: const Icon(
                   Icons.add,
                   size: 35,
@@ -208,7 +210,7 @@ class ListViewMeeting extends StatelessWidget {
                   icon: const Icon(
                     Icons.edit,
                     size: 30,
-                    color: Color(0XFF4FA3A5),
+                    color: APP_PRIMARY,
                   ),
                   onPressed: () => onUpdate(meeting)),
               IconButton(

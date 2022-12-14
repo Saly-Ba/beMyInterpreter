@@ -1,18 +1,13 @@
 import 'package:be_my_interpreter_2/auth_service.dart';
-import 'package:be_my_interpreter_2/db_manager.dart';
 import 'package:be_my_interpreter_2/models.dart';
-import 'package:be_my_interpreter_2/screens/home.dart';
 import 'package:be_my_interpreter_2/screens/languages.dart';
 import 'package:be_my_interpreter_2/screens/nav_bar.dart';
 import 'package:be_my_interpreter_2/utils/styles.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+
+import '../constantes/theme_variable.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({Key? key}) : super(key: key);
@@ -39,7 +34,7 @@ class UserFormState extends State<UserForm> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.account_circle_outlined,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -51,7 +46,7 @@ class UserFormState extends State<UserForm> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.lock_outline,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -63,7 +58,7 @@ class UserFormState extends State<UserForm> {
           0, size.width * 0.02, size.width * 0.035, size.width * 0.02),
       child: const Icon(
         Icons.email_outlined,
-        color: Color(0XFF4FA3A5),
+        color: APP_PRIMARY,
         size: 27.5,
       ),
     );
@@ -72,7 +67,7 @@ class UserFormState extends State<UserForm> {
   Widget? _buildName(Size size) {
     return TextFormField(
       decoration: inputStyle(size, 'Votre prénom', 'Prénom', _prenomIcon(size)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       controller: nameController,
       textCapitalization: TextCapitalization.words,
       validator: (String? value) {
@@ -87,7 +82,7 @@ class UserFormState extends State<UserForm> {
   Widget? _buildLastName(Size size) {
     return TextFormField(
       decoration: inputStyle(size, 'Votre nom', 'Nom', _prenomIcon(size)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       controller: lastNameController,
       
       validator: (String? value) {
@@ -102,7 +97,7 @@ class UserFormState extends State<UserForm> {
   Widget? _buildEmail(Size size) {
     return TextFormField(
       decoration: inputStyle(size, 'Votre email', 'Email', _emailIcon(size)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       validator: (String? value) {
@@ -121,7 +116,7 @@ class UserFormState extends State<UserForm> {
     return TextFormField(
       decoration: inputStyle(
           size, 'Votre mot de passe', 'Mot de passe', _passwordIcon(size)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       controller: passwordController,
       obscureText: true,
       keyboardType: TextInputType.visiblePassword,
@@ -141,7 +136,7 @@ class UserFormState extends State<UserForm> {
     return TextFormField(
       decoration: inputStyle(size, 'Confirmez votre mot de passe',
           'Confirmez le mot de passe', _passwordIcon(size)),
-      cursorColor: const Color(0XFF4FA3A5),
+      cursorColor: APP_PRIMARY,
       obscureText: true,
       controller: confirmPasswordController,
       keyboardType: TextInputType.visiblePassword,
@@ -170,7 +165,7 @@ class UserFormState extends State<UserForm> {
             Row(
               children: [
                 Radio<UserType>(
-                    activeColor: const Color(0XFF4FA3A5),
+                    activeColor: APP_PRIMARY,
                     value: UserType.autre,
                     groupValue: userType,
                     onChanged: (UserType? value) {
@@ -184,7 +179,7 @@ class UserFormState extends State<UserForm> {
             Row(
               children: [
                 Radio<UserType>(
-                    activeColor: const Color(0XFF4FA3A5),
+                    activeColor: APP_PRIMARY,
                     value: UserType.sourd,
                     groupValue: userType,
                     onChanged: (UserType? value) {
@@ -198,7 +193,7 @@ class UserFormState extends State<UserForm> {
             Row(
               children: [
                 Radio<UserType>(
-                    activeColor: const Color(0XFF4FA3A5),
+                    activeColor: APP_PRIMARY,
                     value: UserType.interpret,
                     groupValue: userType,
                     onChanged: (UserType? value) {
@@ -217,15 +212,15 @@ class UserFormState extends State<UserForm> {
 
   Widget? _buildLanguageSelection() {
     return OutlinedButton(
-        onPressed: () => {}, 
-        child: _buildMultipleLanguage()!,
+        onPressed: () => {},
         style: OutlinedButton.styleFrom(
           shape: const StadiumBorder(),
           side: const BorderSide(
-            color: Color(0XFF4FA3A5),
+            color: APP_PRIMARY,
             width: 1.5,
           )
-        ),
+        ), 
+        child: _buildMultipleLanguage()!,
       );
   }
 
@@ -262,7 +257,7 @@ class UserFormState extends State<UserForm> {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(color: Colors.black, fontSize: 18),
       ),
-      trailing: const Icon(Icons.arrow_drop_down, color: Color(0XFF4FA3A5), size: 30,),
+      trailing: const Icon(Icons.arrow_drop_down, color: APP_PRIMARY, size: 30,),
     );
   }
 
@@ -339,6 +334,7 @@ class UserFormState extends State<UserForm> {
                                   ))));
                     }
                   },
+                  style: buttonStyle(size),
                   child: const Text(
                     "S'inscrire",
                     style: TextStyle(
@@ -346,7 +342,6 @@ class UserFormState extends State<UserForm> {
                       fontSize: 16,
                     ),
                   ),
-                  style: buttonStyle(size),
                 ),
                 const SizedBox(
                     height: 25,
@@ -362,7 +357,7 @@ class UserFormState extends State<UserForm> {
                         child: const Text(
                           "Cliquez ici",
                           style: TextStyle(
-                              color: Color(0XFF4FA3A5),
+                              color: APP_PRIMARY,
                               decoration: TextDecoration.underline),
                         ))
                     ],

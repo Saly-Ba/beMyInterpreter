@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'constantes/theme_variable.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         fontFamily: "Muli",
         appBarTheme: const AppBarTheme(
-          color: Color(0XFF4FA3A5),
+          color: APP_PRIMARY,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           iconTheme: IconThemeData(color: Colors.white),
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(color: Colors.black),
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        primaryColor: const Color(0XFF4FA3A5),
+        primaryColor: APP_PRIMARY,
       ),
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,) 
